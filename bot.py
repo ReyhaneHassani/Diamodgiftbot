@@ -2,6 +2,11 @@ import telebot
 
 TOKEN = "7542381540:AAFoF9_X4yq34r-JYkBQIPtISPykAc9mSfU"
 bot = telebot.TeleBot(TOKEN)
+# حذف webhook قبلی
+bot.remove_webhook()
+
+# تنظیم webhook جدید
+bot.set_webhook(url="https://yourdomain.com/your-webhook-path")  # اینجا آدرس webhook جدید خودت رو بذار
 
 # سوالات و پاسخ‌ها، همراه با پیام خاص بعد از جواب درست
 questions = [
