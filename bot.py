@@ -6,7 +6,7 @@ bot = telebot.TeleBot(TOKEN)
 bot.remove_webhook()
 
 # تنظیم webhook جدید
-bot.set_webhook(url="https://yourdomain.com/your-webhook-path")  # اینجا آدرس webhook جدید خودت رو بذار
+bot.set_webhook(url="diamodgiftbot-production.up.railway.app")  # اینجا آدرس webhook جدید خودت رو بذار
 
 # سوالات و پاسخ‌ها، همراه با پیام خاص بعد از جواب درست
 questions = [
