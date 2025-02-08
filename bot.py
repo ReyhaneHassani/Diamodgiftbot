@@ -78,4 +78,7 @@ def check_answer(message):
     else:
         bot.send_message(user_id, "❌ اشتباهه، دوباره امتحان کن.")
 
+bot.remove_webhook()  # حذف webhook اگر قبلاً تنظیم شده
+bot.set_webhook(url='URL_OF_YOUR_WEBHOOK')  # تنظیم مجدد webhook
+
 bot.polling()
