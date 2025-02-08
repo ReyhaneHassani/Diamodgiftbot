@@ -42,9 +42,16 @@ def check_answer(message):
         correct_answer = correct_answer.strip().lower().replace(" ", "")
 
         if user_answer == correct_answer:
-            user_states[user_id] += 1
             bot.send_message(user_id, "✅ درست گفتی!")
-            send_question(user_id)
+            
+            user_states[user_id] += 1  # برو سوال بعدی
+            
+            print(f"✅ سوال جدید ارسال شد برای کاربر {user_id}، اندیس جدید: {user_states[user_id]}")  # لاگ دیباگ
+            
+            if user_states[user_id] < len(questions):  # اگر سوالات تموم نشده، سوال بعدی رو بپرس
+                send_question(user_id)
+            else:
+                bot.send_message(user_id, "🎉 تبریک! تو به همه سوالات پاسخ دادی.")
             return  
         else:
             bot.send_message(user_id, "❌ اشتباهه، دوباره امتحان کن.")
