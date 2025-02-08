@@ -1,10 +1,12 @@
 import time
 import telebot
+from flask import Flask, request
 
 TOKEN = "7542381540:AAFoF9_X4yq34r-JYkBQIPtISPykAc9mSfU"
-WEBHOOK_URL = "https://diamodgiftbot-production.up.railway.app"  # آدرس وب‌هوک
+WEBHOOK_URL = "https://diamodgiftbot-production.up.railway.app"
 
 bot = telebot.TeleBot(TOKEN)
+app = Flask(__name__)
 
 # حذف و تنظیم مجدد Webhook
 bot.remove_webhook()
@@ -125,8 +127,13 @@ def check_answer(message):
     else:
         safe_send_message(user_id, "❌ اشتباهه، دوباره امتحان کن.")
 
-# حذف و تنظیم مجدد وبهوک
-bot.remove_webhook()
-bot.set_webhook(url=WEBHOOK_URL)
+# --- تنظیم Webhook برای دریافت پیام‌های تلگرام ---
+@app.route("/", methods=["POST"])
+def webhook():
+    update = request.get_json()
+    if update:
+        bot.process_new_updates([telebot.types.Update.de_json(update)])
+    return "OK", 200
 
-bot.polling()
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
