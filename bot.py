@@ -24,7 +24,10 @@ def send_question(user_id):
         if question["type"] == "text":
             bot.send_message(user_id, question["question"])
         elif question["type"] == "image":
-            bot.send_photo(user_id, question["image"], caption=question["question"])
+            if question["image"].startswith("http"):  # اگر لینک اینترنتی بود
+                bot.send_photo(user_id, question["image"], caption=question["question"])
+            else:  # اگر file_id از تلگرام بود
+                bot.send_photo(user_id, photo=question["image"], caption=question["question"])
     else:
         bot.send_message(user_id, "✅ تبریک! شما همه سوالات را پاسخ دادید.")
 
@@ -36,16 +39,15 @@ def check_answer(message):
     if index < len(questions):
         question = questions[index]
         correct_answer = question["answer"]
-
-        # حذف فاصله‌های اول و آخر، کوچک کردن حروف، و حذف فاصله‌های میانی
-        user_answer = message.text.strip().lower().replace(" ", "")
-        correct_answer = correct_answer.strip().lower().replace(" ", "")
-
-        if user_answer == correct_answer:
-            user_states[user_id] += 1
+        
+        if message.text.strip().lower() == correct_answer.lower():
+            user_states[user_id] += 1  # سوال بعدی
+            
             bot.send_message(user_id, "✅ درست گفتی!")
-            send_question(user_id)
-            return  
+            send_question(user_id)  # سوال بعدی رو ارسال کن
+            
+            return  # **اضافه شد تا مطمئن بشیم کد جای دیگه گیر نمیکنه**
+
         else:
             bot.send_message(user_id, "❌ اشتباهه، دوباره امتحان کن.")
 
