@@ -5,7 +5,7 @@ bot = telebot.TeleBot(TOKEN)
 
 questions = [
     {"type": "text", "question": "1+1 چند میشه؟", "answer": "2"},
-    {"type": "image", "question": "به این تصویر نگاه کن و بگو چی می‌بینی", "image": "https://example.com/image.jpg", "answer": "درخت"},
+    {"type": "image", "question": "به این تصویر نگاه کن و بگو چی می‌بینی", "image": "https://ibb.co/ZR74Fb5x", "answer": "درخت"},
     {"type": "text", "question": "پایتخت ایران کجاست؟", "answer": "تهران"},
 ]
 
