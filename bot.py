@@ -14,46 +14,65 @@ user_states = {}
 @bot.message_handler(commands=['start'])
 def start(message):
     user_id = message.chat.id
+    
+    # بررسی می‌کنیم که کاربر قبلاً وارد نشده باشه
+    if user_id not in user_states:
+        user_states[user_id] = 0  # شروع از سوال اول
+    
+    bot.send_message(user_id, "👋 سلام! بریم سراغ سوال اول...")
+    send_question(user_id)
+
+@bot.message_handler(commands=['reset'])
+def reset(message):
+    user_id = message.chat.id
+    
+    # ریست کردن وضعیت کاربر
     user_states[user_id] = 0
+    bot.send_message(user_id, "وضعیت شما ریست شد. بیاید دوباره شروع کنیم!")
     send_question(user_id)
 
 def send_question(user_id):
     index = user_states.get(user_id, 0)
-    if index < len(questions):
-        question = questions[index]
-        if question["type"] == "text":
-            bot.send_message(user_id, question["question"])
-        elif question["type"] == "image":
-            bot.send_photo(user_id, question["image"], caption=question["question"])
-    else:
-        bot.send_message(user_id, "✅ تبریک! شما همه سوالات را پاسخ دادید.")
+    
+    if index >= len(questions):
+        bot.send_message(user_id, "🎉 تبریک! تو به همه سوالات پاسخ دادی.")
+        return
+    
+    question = questions[index]
+    if question["type"] == "text":
+        bot.send_message(user_id, question["question"])
+    elif question["type"] == "image":
+        bot.send_photo(user_id, question["image"], caption=question["question"])
+    
+    print(f"📩 ارسال سوال {index+1} برای کاربر {user_id}")
 
 @bot.message_handler(func=lambda message: True)
 def check_answer(message):
     user_id = message.chat.id
     index = user_states.get(user_id, 0)
     
-    if index < len(questions):
-        question = questions[index]
-        correct_answer = question["answer"]
+    if index >= len(questions):
+        bot.send_message(user_id, "✅ تو قبلاً همه سوالات رو جواب دادی.")
+        return
+    
+    question = questions[index]
+    correct_answer = question["answer"]
 
-        # حذف فاصله‌های اول و آخر، کوچک کردن حروف، و حذف فاصله‌های میانی
-        user_answer = message.text.strip().lower().replace(" ", "")
-        correct_answer = correct_answer.strip().lower().replace(" ", "")
+    # حذف فاصله‌های اضافی و کوچک کردن حروف برای مقایسه راحت‌تر
+    user_answer = message.text.strip().lower().replace(" ", "")
+    correct_answer = correct_answer.strip().lower().replace(" ", "")
 
-        if user_answer == correct_answer:
-            bot.send_message(user_id, "✅ درست گفتی!")
-            
-            user_states[user_id] += 1  # برو سوال بعدی
-            
-            print(f"✅ سوال جدید ارسال شد برای کاربر {user_id}، اندیس جدید: {user_states[user_id]}")  # لاگ دیباگ
-            
-            if user_states[user_id] < len(questions):  # اگر سوالات تموم نشده، سوال بعدی رو بپرس
-                send_question(user_id)
-            else:
-                bot.send_message(user_id, "🎉 تبریک! تو به همه سوالات پاسخ دادی.")
-            return  
+    if user_answer == correct_answer:
+        bot.send_message(user_id, "✅ درست گفتی!")
+        user_states[user_id] += 1  # برو سوال بعدی
+        
+        print(f"✅ کاربر {user_id} جواب درست داد، رفت به سوال {user_states[user_id] + 1}")
+        
+        if user_states[user_id] < len(questions):  # اگر سوالات تموم نشده، سوال بعدی رو بپرس
+            send_question(user_id)
         else:
-            bot.send_message(user_id, "❌ اشتباهه، دوباره امتحان کن.")
+            bot.send_message(user_id, "🎉 تبریک! تو به همه سوالات پاسخ دادی.")
+    else:
+        bot.send_message(user_id, "❌ اشتباهه، دوباره امتحان کن.")
 
 bot.polling()
