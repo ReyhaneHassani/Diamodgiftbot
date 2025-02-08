@@ -2,7 +2,9 @@ import time
 import telebot
 from flask import Flask, request
 
-TOKEN = "7542381540:AAFoF9_X4yq34r-JYkBQIPtISPykAc9mSfU"
+import os
+TOKEN = os.environ.get("BOT_TOKEN")
+
 WEBHOOK_URL = "https://diamodgiftbot-production.up.railway.app"
 
 bot = telebot.TeleBot(TOKEN)
